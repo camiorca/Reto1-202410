@@ -145,3 +145,4 @@ dmypy.json
 !Data/videos-small.csv
 
 .vim
+.idea

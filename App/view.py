@@ -21,14 +21,18 @@
  """
 
 import config as cf
+import os
 import sys
 import controller
 from DISClib.ADT import list as lt
 from DISClib.ADT import stack as st
 from DISClib.ADT import queue as qu
+from pathlib import Path
 assert cf
 from tabulate import tabulate
 import traceback
+from sys import version
+print(version)
 
 """
 La vista se encarga de la interacción con el usuario
@@ -38,12 +42,12 @@ operación solicitada
 """
 
 
-def new_controller():
+def new_controller(adt="ARRAY_LIST"):
     """
         Se crea una instancia del controlador
     """
-    #TODO: Llamar la función del controlador donde se crean las estructuras de datos
-    pass
+    controller_instance = controller.new_controller(adt)
+    return controller_instance
 
 
 def print_menu():
@@ -60,12 +64,23 @@ def print_menu():
     print("0- Salir")
 
 
-def load_data(control):
+def load_data(control, data_size="10-por-"):
     """
     Carga los datos
     """
-    #TODO: Realizar la carga de datos
-    pass
+    # ac_list = ['job', 'emp', 'sk', 'ml']
+    path = os.path.abspath("..\\Data\\")
+    acronyms = {
+        "jobs": Path(f"{path}/{data_size}jobs.csv"),
+        "employments": Path(f"{path}/{data_size}employments_types.csv"),
+        "multloc": Path(f"{path}/{data_size}multilocations.csv"),
+        "skills": Path(f"{path}/{data_size}skills.csv"),
+    }
+    controller.load_data(control, acronyms["jobs"], 'job')
+    controller.load_data(control, acronyms["multloc"], 'ml')
+    controller.load_data(control, acronyms["skills"], 'sk')
+    controller.load_data(control, acronyms["employments"], 'emp')
+    return control
 
 
 def print_data(control, id):
@@ -139,8 +154,26 @@ def print_req_8(control):
     pass
 
 
+def _set_adt(adt):
+    if adt == 1:
+        return "ARRAY_LIST"
+    elif adt == 2:
+        return "LINKED_LIST"
+
+    return ""
+
+
+def _set_tabulate_headers(ac_dict):
+    for item in ac_dict:
+
+
+def _print_data(struct):
+    first = lt.subList(struct, 1, 3)
+    last = lt.subList(struct, lt.size(struct) - 3, 3)
+    print(tabulate(first, headers=first[0].keys(), tablefmt='rounded_grid'))
+
 # Se crea el controlador asociado a la vista
-control = new_controller()
+# control = new_controller()
 
 # main del reto
 if __name__ == "__main__":
@@ -153,8 +186,13 @@ if __name__ == "__main__":
         print_menu()
         inputs = input('Seleccione una opción para continuar\n')
         if int(inputs) == 1:
+            estructura = input("Indique la estructura base:\n1 - ARRAY_LIST\n2 - LINKED_LIST\n")
+            # ordenamiento = input("Indique el criterio de ordenamiento:\n1 - Nombre empresa\n2 - Fecha publicacion\n")
+            adt = _set_adt(int(estructura))
+            control = new_controller(adt)
             print("Cargando información de los archivos ....\n")
-            data = load_data(control)
+            data = load_data(control["model"])
+            _print_data(control["model"]["jobs"])
         elif int(inputs) == 2:
             print_req_1(control)
 

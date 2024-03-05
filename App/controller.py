@@ -26,28 +26,51 @@ import time
 import csv
 
 
+
 """
 El controlador se encarga de mediar entre la vista y el modelo.
 """
 
 
-def new_controller():
+def new_controller(adt="ARRAY_LIST"):
     """
     Crea una instancia del modelo
     """
-    #TODO: Llamar la función del modelo que crea las estructuras de datos
-    pass
+    control = {
+        "model": model.new_data_structs(adt)
+    }
+    return control
 
 
 # Funciones para la carga de datos
 
-def load_data(control, filename):
+def load_data(control, filename, data_name):
     """
     Carga los datos del reto
     """
-    # TODO: Realizar la carga de datos
-    pass
-
+    match data_name:
+        case 'job':
+            with open(filename, 'r', encoding="utf-8") as f:
+                reader = csv.DictReader(f)
+                for line in reader:
+                    model.add_data(control, line, 'job')
+        case 'ml':
+            with open(filename, 'r', encoding="utf-8") as f:
+                reader = csv.DictReader(f)
+                for line in reader:
+                    model.add_data(control, line, 'ml')
+        case 'sk':
+            with open(filename, 'r', encoding="utf-8") as f:
+                reader = csv.DictReader(f)
+                for line in reader:
+                    model.add_data(control, line, 'sk')
+        case 'emp':
+            with open(filename, 'r', encoding="utf-8") as f:
+                reader = csv.DictReader(f)
+                for line in reader:
+                    model.add_data(control, line, 'emp')
+        case _:
+            print("Not allowed")
 
 # Funciones de ordenamiento
 

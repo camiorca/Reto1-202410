@@ -44,24 +44,37 @@ dos listas, una para los videos, otra para las categorias de los mismos.
 # Construccion de modelos
 
 
-def new_data_structs():
+def new_data_structs(adt="ARRAY_LIST"):
     """
     Inicializa las estructuras de datos del modelo. Las crea de
     manera vacía para posteriormente almacenar la información.
     """
-    #TODO: Inicializar las estructuras de datos
-    pass
+    structs = {
+        "jobs": lt.newList(adt),
+        "employments": lt.newList(adt),
+        "multloc": lt.newList(adt),
+        "skills": lt.newList(adt)
+    }
+    return structs
 
 
 # Funciones para agregar informacion al modelo
 
-def add_data(data_structs, data):
+def add_data(data_structs, data, add_case):
     """
     Función para agregar nuevos elementos a la lista
     """
-    #TODO: Crear la función para agregar elementos a una lista
-    pass
-
+    match add_case:
+        case 'job':
+            lt.addLast(data_structs["jobs"], data)
+        case 'ml':
+            lt.addLast(data_structs["multloc"], data)
+        case 'sk':
+            lt.addLast(data_structs["skills"], data)
+        case 'emp':
+            lt.addLast(data_structs["employments"], data)
+        case _:
+            print("Wrong surname given")
 
 # Funciones para creacion de datos
 
