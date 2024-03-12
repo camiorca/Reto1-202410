@@ -19,6 +19,7 @@
  * You should have received a copy of the GNU General Public License
  * along withthis program.  If not, see <http://www.gnu.org/licenses/>.
  """
+import datetime
 
 import config as cf
 import model
@@ -51,28 +52,84 @@ def load_data(control, filename, data_name):
     match data_name:
         case 'job':
             with open(filename, 'r', encoding="utf-8") as f:
-                reader = csv.DictReader(f)
+                reader = csv.DictReader(f, delimiter=";")
+                _set_tabulate_headers(filename, 'job')
                 for line in reader:
+                    date_data = _set_string_as_datetime(line["published_at"])
+                    line["published_at"] = date_data
                     model.add_data(control, line, 'job')
         case 'ml':
             with open(filename, 'r', encoding="utf-8") as f:
-                reader = csv.DictReader(f)
+                reader = csv.DictReader(f, delimiter=";")
+                _set_tabulate_headers(filename, 'ml')
                 for line in reader:
                     model.add_data(control, line, 'ml')
         case 'sk':
             with open(filename, 'r', encoding="utf-8") as f:
-                reader = csv.DictReader(f)
+                reader = csv.DictReader(f, delimiter=";")
+                _set_tabulate_headers(filename, 'sk')
                 for line in reader:
                     model.add_data(control, line, 'sk')
         case 'emp':
             with open(filename, 'r', encoding="utf-8") as f:
-                reader = csv.DictReader(f)
+                reader = csv.DictReader(f, delimiter=";")
+                _set_tabulate_headers(filename, 'emp')
                 for line in reader:
                     model.add_data(control, line, 'emp')
         case _:
             print("Not allowed")
 
 # Funciones de ordenamiento
+
+
+def _set_tabulate_headers(filename, keyword):
+    match keyword:
+        case 'job':
+            with open(filename, 'r', encoding="utf-8") as f:
+                reader = csv.DictReader(f)
+                dict_from_csv = dict(list(reader)[0])
+            list_of_column_names = list(dict_from_csv.keys())
+            model.headers["jobs"] = list_of_column_names[0].split(";")
+        case 'ml':
+            with open(filename, 'r', encoding="utf-8") as f:
+                reader = csv.DictReader(f)
+                dict_from_csv = dict(list(reader)[0])
+            list_of_column_names = list(dict_from_csv.keys())
+            model.headers["multloc"] = list_of_column_names[0].split(";")
+        case 'sk':
+            with open(filename, 'r', encoding="utf-8") as f:
+                reader = csv.DictReader(f)
+                dict_from_csv = dict(list(reader)[0])
+            list_of_column_names = list(dict_from_csv.keys())
+            model.headers["skills"] = list_of_column_names[0].split(";")
+        case 'emp':
+            with open(filename, 'r', encoding="utf-8") as f:
+                reader = csv.DictReader(f)
+                dict_from_csv = dict(list(reader)[0])
+            list_of_column_names = list(dict_from_csv.keys())
+            model.headers["employments"] = list_of_column_names[0].split(";")
+        case _:
+            print("Wrong surname given")
+
+
+def _set_string_as_datetime(date_str):
+    return datetime.datetime.strptime(date_str, "%Y-%m-%dT%H:%M:%S.%f%z")
+
+
+def get_tabulate_headers(keyword):
+    match keyword:
+        case 'job':
+            return model.headers["jobs"]
+        case 'ml':
+            return model.headers["multloc"]
+        case 'sk':
+            return model.headers["skills"]
+        case 'emp':
+            return model.headers["employments"]
+        case _:
+            print("Wrong surname given")
+    return None
+
 
 def sort(control):
     """
@@ -92,36 +149,32 @@ def get_data(control, id):
     pass
 
 
-def req_1(control):
+def req_1(control, country_code, seniority, n):
     """
     Retorna el resultado del requerimiento 1
     """
-    # TODO: Modificar el requerimiento 1
-    pass
+    return model.req_1(control["model"], country_code, seniority, n)
 
 
-def req_2(control):
+def req_2(control, company_name, city, n):
     """
     Retorna el resultado del requerimiento 2
     """
-    # TODO: Modificar el requerimiento 2
-    pass
+    return model.req_2(control["model"], company_name, city, n)
 
 
-def req_3(control):
+def req_3(control, company_name, init_date, final_date):
     """
     Retorna el resultado del requerimiento 3
     """
-    # TODO: Modificar el requerimiento 3
-    pass
+    return model.req_3(control["model"], company_name, init_date, final_date)
 
 
-def req_4(control):
+def req_4(control, country_code, init_date, final_date):
     """
     Retorna el resultado del requerimiento 4
     """
-    # TODO: Modificar el requerimiento 4
-    pass
+    return model.req_4(control["model"], country_code, init_date, final_date)
 
 
 def req_5(control):

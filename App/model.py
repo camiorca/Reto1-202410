@@ -43,6 +43,13 @@ dos listas, una para los videos, otra para las categorias de los mismos.
 
 # Construccion de modelos
 
+headers = {
+    "jobs": [],
+    "employments": [],
+    "multloc": [],
+    "skills": [],
+}
+
 
 def new_data_structs(adt="ARRAY_LIST"):
     """
@@ -104,36 +111,83 @@ def data_size(data_structs):
     pass
 
 
-def req_1(data_structs):
+def req_1(data_structs, country_code, expertise_level, n):
     """
     Función que soluciona el requerimiento 1
     """
-    # TODO: Realizar el requerimiento 1
-    pass
+    jobs_iter = lt.iterator(data_structs["jobs"])
+    res_list = lt.newList(datastructure="ARRAY_LIST")
+    for element in jobs_iter:
+        if element["country_code"] == country_code and element["experience_level"] == expertise_level:
+            lt.addFirst(res_list, element)
+
+    if lt.size(res_list) == 0:
+        return 0, None
+    elif lt.size(res_list) < n:
+        return lt.size(res_list), res_list
+    else:
+        return lt.size(res_list), lt.subList(res_list, 1, n)
 
 
-def req_2(data_structs):
+def req_2(data_structs, company_name, city, n):
     """
     Función que soluciona el requerimiento 2
     """
-    # TODO: Realizar el requerimiento 2
-    pass
+    jobs_iter = lt.iterator(data_structs["jobs"])
+    res_list = lt.newList(datastructure="ARRAY_LIST")
+    for element in jobs_iter:
+        if element["company_name"] == company_name and element["city"] == city:
+            lt.addFirst(res_list, element)
+
+    if lt.size(res_list) == 0:
+        return 0, None
+    elif lt.size(res_list) < n:
+        return lt.size(res_list), res_list
+    else:
+        return lt.size(res_list), lt.subList(res_list, 1, n)
 
 
-def req_3(data_structs):
+def req_3(data_structs, company_name, init_date, final_date):
     """
     Función que soluciona el requerimiento 3
     """
-    # TODO: Realizar el requerimiento 3
-    pass
+    counter_dict = {
+        "junior": 0,
+        "mid": 0,
+        "senior": 0
+    }
+    jobs_iter = lt.iterator(data_structs["jobs"])
+    res_list = lt.newList(datastructure="ARRAY_LIST")
+    for element in jobs_iter:
+        if element["company_name"] == company_name and init_date <= element["published_at"] <= final_date:
+            counter_dict[element["experience_level"]] += 1
+            lt.addFirst(res_list, element)
+
+    return counter_dict, sort(res_list, "country")
 
 
-def req_4(data_structs):
+def req_4(data_structs, country_code, init_date, final_date):
     """
     Función que soluciona el requerimiento 4
     """
-    # TODO: Realizar el requerimiento 4
-    pass
+    company_counter = {}
+    city_counter = {}
+    jobs_iter = lt.iterator(data_structs["jobs"])
+    res_list = lt.newList(datastructure="ARRAY_LIST")
+    for element in jobs_iter:
+        if element["country_code"] == country_code and init_date <= element["published_at"] <= final_date:
+            lt.addFirst(res_list, element)
+            if element["company_name"] not in company_counter:
+                company_counter[element["company_name"]] = 1
+            else:
+                company_counter[element["company_name"]] += 1
+
+            if element["city"] not in city_counter:
+                city_counter[element["city"]] = 1
+            else:
+                city_counter[element["city"]] += 1
+
+    return company_counter, city_counter, lt.size(res_list), sort(res_list, "name")
 
 
 def req_5(data_structs):
@@ -180,7 +234,17 @@ def compare(data_1, data_2):
 # Funciones de ordenamiento
 
 
-def sort_criteria(data_1, data_2):
+def _set_sort_criteria(use_case):
+    match use_case:
+        case "default":
+            return default_sort_criteria
+        case "name":
+            return company_sort_criteria
+        case "country":
+            return country_sort_criteria
+
+
+def default_sort_criteria(data_1, data_2):
     """sortCriteria criterio de ordenamiento para las funciones de ordenamiento
 
     Args:
@@ -190,13 +254,43 @@ def sort_criteria(data_1, data_2):
     Returns:
         _type_: _description_
     """
-    #TODO: Crear función comparadora para ordenar
-    pass
+    return data_1["published_at"] < data_2["published_at"]
 
 
-def sort(data_structs):
+def company_sort_criteria(data_1, data_2):
+    """sortCriteria criterio de ordenamiento para las funciones de ordenamiento
+
+    Args:
+        data1 (_type_): _description_
+        data2 (_type_): _description_
+
+    Returns:
+        _type_: _description_
+    """
+    if data_1["company_name"] == data_2["company_name"]:
+        return data_1["published_at"] < data_2["published_at"]
+    else:
+        return data_1["company_name"] < data_2["company_name"]
+
+
+def country_sort_criteria(data_1, data_2):
+    """sortCriteria criterio de ordenamiento para las funciones de ordenamiento
+
+    Args:
+        data1 (_type_): _description_
+        data2 (_type_): _description_
+
+    Returns:
+        _type_: _description_
+    """
+    if data_1["published_at"] == data_2["published_at"]:
+        return data_1["country_code"] < data_2["country_code"]
+    else:
+        return data_1["published_at"] < data_2["published_at"]
+
+
+def sort(data_structs, param):
     """
     Función encargada de ordenar la lista con los datos
     """
-    #TODO: Crear función de ordenamiento
-    pass
+    return ins.sort(data_structs, _set_sort_criteria(param))

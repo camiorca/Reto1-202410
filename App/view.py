@@ -19,6 +19,7 @@
  * You should have received a copy of the GNU General Public License
  * along withthis program.  If not, see <http://www.gnu.org/licenses/>.
  """
+import datetime
 
 import config as cf
 import os
@@ -51,8 +52,8 @@ def new_controller(adt="ARRAY_LIST"):
 
 
 def print_menu():
-    print("Bienvenido")
-    print("1- Cargar información")
+    print("Welcome")
+    print("1- Load data")
     print("2- Ejecutar Requerimiento 1")
     print("3- Ejecutar Requerimiento 2")
     print("4- Ejecutar Requerimiento 3")
@@ -90,36 +91,60 @@ def print_data(control, id):
     #TODO: Realizar la función para imprimir un elemento
     pass
 
-def print_req_1(control):
+
+def print_req_1(control, country_code, seniority, n):
     """
         Función que imprime la solución del Requerimiento 1 en consola
     """
-    # TODO: Imprimir el resultado del requerimiento 1
-    pass
+    res_size, res = controller.req_1(control, country_code, seniority, n)
+    print(f"Showing {n} results from {res_size} total offers.")
+    if res is None:
+        print("There were no results for this search.")
+    else:
+        print(tabulate(res["elements"], headers="keys", tablefmt='rounded_grid'))
 
 
-def print_req_2(control):
+def print_req_2(control, company_name, city, n):
     """
         Función que imprime la solución del Requerimiento 2 en consola
     """
-    # TODO: Imprimir el resultado del requerimiento 2
-    pass
+    res_size, res = controller.req_2(control, company_name, city, n)
+    if res_size < n:
+        print(f"Showing {res_size} results from {res_size} total offers.")
+    else:
+        print(f"Showing {n} results from {res_size} total offers.")
+
+    if res is None:
+        print("There were no results for this search.")
+    else:
+        print(tabulate(res["elements"], headers="keys", tablefmt='rounded_grid'))
 
 
-def print_req_3(control):
+def print_req_3(control, company_name, init_date, final_date):
     """
         Función que imprime la solución del Requerimiento 3 en consola
     """
-    # TODO: Imprimir el resultado del requerimiento 3
-    pass
+    counter_dict, res = controller.req_3(control, company_name, init_date, final_date)
+    if lt.size(res) == 0:
+        print("There were no results for this search.")
+    else:
+        print(tabulate(res["elements"], headers="keys", tablefmt='rounded_grid'))
+
+    print(f"Number of junior offers:  {counter_dict['junior']}")
+    print(f"Number of junior offers:  {counter_dict['mid']}")
+    print(f"Number of junior offers:  {counter_dict['senior']}")
 
 
-def print_req_4(control):
+def print_req_4(control, country_code, init_date, final_date):
     """
         Función que imprime la solución del Requerimiento 4 en consola
     """
-    # TODO: Imprimir el resultado del requerimiento 4
-    pass
+    company_counter, city_counter, res_size, res = controller.req_4(control, country_code, init_date, final_date)
+    print(f"The offer total found for country code {country_code} is: {res_size}")
+    if lt.size(res) == 0:
+        print("There were no results for this search.")
+    else:
+        print(tabulate(res["elements"], headers="keys", tablefmt='rounded_grid'))
 
 
 def print_req_5(control):
@@ -158,19 +183,37 @@ def _set_adt(adt):
     if adt == 1:
         return "ARRAY_LIST"
     elif adt == 2:
-        return "LINKED_LIST"
+        return "SINGLE_LINKED"
+    elif adt == 3:
+        return "DOUBLE_LINKED"
 
     return ""
 
 
-def _set_tabulate_headers(ac_dict):
-    for item in ac_dict:
-
-
-def _print_data(struct):
-    first = lt.subList(struct, 1, 3)
-    last = lt.subList(struct, lt.size(struct) - 3, 3)
-    print(tabulate(first, headers=first[0].keys(), tablefmt='rounded_grid'))
+def _print_data(struct, keyword):
+    match keyword:
+        case 'job':
+            first = lt.subList(struct, 1, 3)
+            last = lt.subList(struct, lt.size(struct) - 3, 3)
+            print(tabulate(first["elements"], headers="keys", tablefmt='rounded_grid'))
+            print(tabulate(last["elements"], headers="keys", tablefmt='rounded_grid'))
+        case 'ml':
+            first = lt.subList(struct, 1, 3)
+            last = lt.subList(struct, lt.size(struct) - 3, 3)
+            print(tabulate(first["elements"], headers="keys", tablefmt='rounded_grid'))
+            print(tabulate(last["elements"], headers="keys", tablefmt='rounded_grid'))
+        case 'sk':
+            first = lt.subList(struct, 1, 3)
+            last = lt.subList(struct, lt.size(struct) - 3, 3)
+            print(tabulate(first["elements"], headers="keys", tablefmt='rounded_grid'))
+            print(tabulate(last["elements"], headers="keys", tablefmt='rounded_grid'))
+        case 'emp':
+            first = lt.subList(struct, 1, 3)
+            last = lt.subList(struct, lt.size(struct) - 3, 3)
+            print(tabulate(first["elements"], headers="keys", tablefmt='rounded_grid'))
+            print(tabulate(last["elements"], headers="keys", tablefmt='rounded_grid'))
+        case _:
+            print("Wrong surname given")
 
 # Se crea el controlador asociado a la vista
 # control = new_controller()
@@ -185,6 +228,7 @@ if __name__ == "__main__":
     while working:
         print_menu()
         inputs = input('Seleccione una opción para continuar\n')
+
         if int(inputs) == 1:
             estructura = input("Indique la estructura base:\n1 - ARRAY_LIST\n2 - LINKED_LIST\n")
             # ordenamiento = input("Indique el criterio de ordenamiento:\n1 - Nombre empresa\n2 - Fecha publicacion\n")
@@ -192,18 +236,65 @@ if __name__ == "__main__":
             control = new_controller(adt)
             print("Cargando información de los archivos ....\n")
             data = load_data(control["model"])
-            _print_data(control["model"]["jobs"])
+            print("======== Jobs ========", f"Total elements: {lt.size(control['model']['jobs'])}")
+            _print_data(control["model"]["jobs"], 'job')
+            print("======== Employment Types ========", f"Total elements: {lt.size(control['model']['employments'])}")
+            _print_data(control["model"]["employments"], 'emp')
+            print("======== Skills ========", f"Total elements: {lt.size(control['model']['skills'])}")
+            _print_data(control["model"]["skills"], 'sk')
+            print("======== Multilocations ========", f"Total elements: {lt.size(control['model']['multloc'])}")
+            _print_data(control["model"]["multloc"], 'ml')
+
         elif int(inputs) == 2:
-            print_req_1(control)
+            n = int(input("Please enter the number of vacancies you are looking for: "))
+            country_code = input("Please enter a country code: (i.e. CO): ")
+            seniority = input("Please enter a seniority level: (junior/mid/senior): ")
+            print_req_1(
+                control,
+                country_code.upper(),
+                seniority.lower(),
+                n
+            )
+                # datetime.datetime.strptime(init_date, "%Y-%m-%d"),
+                # datetime.datetime.strptime(final_date, "%Y-%m-%d")
+            # )
 
         elif int(inputs) == 3:
-            print_req_2(control)
+            n = int(input("Please enter the number of vacancies you are looking for: "))
+            company_name = input("Please enter a company title: ")
+            city = input("Please enter a city: ")
+            print_req_2(
+                control,
+                company_name,
+                city,
+                n
+            )
 
         elif int(inputs) == 4:
-            print_req_3(control)
+            company_name = input("Please enter a company title: ")
+            init_date_str = input("Please enter a final date (YYYY-MM-dd): ")
+            final_date_str = input("Please enter a final date (YYYY-MM-dd): ")
+            init_date = datetime.datetime.strptime(f"{init_date_str}T00:00:00.000Z", "%Y-%m-%dT%H:%M:%S.%f%z")
+            final_date = datetime.datetime.strptime(f"{final_date_str}T00:00:00.000Z", "%Y-%m-%dT%H:%M:%S.%f%z")
+            print_req_3(
+                control,
+                company_name,
+                init_date,
+                final_date
+            )
 
         elif int(inputs) == 5:
-            print_req_4(control)
+            country_code = input("Please enter a country code: (i.e. CO): ")
+            init_date_str = input("Please enter a final date (YYYY-MM-dd): ")
+            final_date_str = input("Please enter a final date (YYYY-MM-dd): ")
+            init_date = datetime.datetime.strptime(f"{init_date_str}T00:00:00.000Z", "%Y-%m-%dT%H:%M:%S.%f%z")
+            final_date = datetime.datetime.strptime(f"{final_date_str}T00:00:00.000Z", "%Y-%m-%dT%H:%M:%S.%f%z")
+            print_req_4(
+                control,
+                country_code,
+                init_date,
+                final_date
+            )
 
         elif int(inputs) == 6:
             print_req_5(control)

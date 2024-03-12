@@ -1,5 +1,5 @@
-<!-- SAMPLE CHALLENGE 1 -->
-# Challenge Template
+<!-- CHALLENGE 1 - Data Structures and Algorithms 202410 -->
+# CHALLENGE 1 - Data Structures and Algorithms 202410
 <!-- PROJECT SHIELDS -->
 [![Contributors][challenge1-contributors-shield]][challenge1-contributors-url]
 [![Forks][challenge1-forks-shield]][challenge1-forks-url]
@@ -118,9 +118,7 @@ This program is distributed in the hope that it will be useful, but WITHOUT ANY 
 <!-- ACKNOWLEDGMENTS -->
 ## Authors and acknowledgment
 
-* [Dario Correal][dariocorreal-url] is the original author and main developer of the library.
-* [Santiago Arteaga][phillipus85-url] is a contributor and repository administrator. 
-* [Luis Florez][le99-url] is a contributor and developed examples and tutorials for the library.
+* [Camilo Ortiz][camiorca-url] is a Data Structures and Algorithms professor in Universidad de Los Andes, Bogota, and developer of the following challenges.
 
 [Back to top](#challenge-template)
 
@@ -152,6 +150,7 @@ This program is distributed in the hope that it will be useful, but WITHOUT ANY 
 [dariocorreal-url]: https://github.com/dariocorreal
 [phillipus85-url]: https://github.com/phillipus85
 [le99-url]: https://github.com/le99
+[camiorca-url]: https://github.com/camiorca
 <!-- EDA lab + challenges repository -->
 [sample-mvc-url]: https://github.com/ISIS1225DEVS/ISIS1225-SampleMVC
 [sample-conflicts-url]: https://github.com/ISIS1225DEVS/ISIS1225-SampleConflicts
